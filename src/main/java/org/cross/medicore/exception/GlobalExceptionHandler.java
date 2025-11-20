@@ -16,7 +16,7 @@ public class GlobalExceptionHandler {
 
        ErrorResponse errorResponse = new ErrorResponse(path, false, ex.getMessage(), "v1.0.0");
 
-       return new ResponseEntity<ErrorResponse>(errorResponse, HttpStatus.BAD_REQUEST);
+       return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
@@ -27,6 +27,6 @@ public class GlobalExceptionHandler {
 
         ErrorResponse errorResponse = new ErrorResponse(path, false, ex.getMessage(), "v1.0.0");
 
-        return new ResponseEntity<ErrorResponse>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
