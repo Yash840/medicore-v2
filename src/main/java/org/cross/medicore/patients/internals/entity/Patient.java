@@ -17,6 +17,7 @@ import java.util.Map;
 public class Patient {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "patient_id")
+    @Getter
     private long patientId;
 
     @Column(name = "first_name", nullable = false, length = 50)
@@ -72,6 +73,7 @@ public class Patient {
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
+    @Getter
     private PatientStatus status;
 
     public int getAgeYears(){
