@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 public record PatientBriefProfile(
         long patientId,
+        long userId,
         String firstName,
         String lastName,
         String middleName,

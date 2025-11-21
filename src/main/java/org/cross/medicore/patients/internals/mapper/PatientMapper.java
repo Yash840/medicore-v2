@@ -34,6 +34,7 @@ public class PatientMapper {
         }
         return new PatientBriefProfile(
                 patient.getPatientId(),
+                patient.getUserId(),
                 patient.getFirstName(),
                 patient.getLastName(),
                 patient.getMiddleName(),
@@ -62,7 +63,8 @@ public class PatientMapper {
                 patient.getBloodGroup(),
                 patient.getSex(),
                 patient.getStatus(),
-                toPatientAddressDto(patient.getAddress())
+                toPatientAddressDto(patient.getAddress()),
+                patient.getUserId()
         );
     }
 

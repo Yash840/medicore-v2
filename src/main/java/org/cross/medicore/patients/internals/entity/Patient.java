@@ -8,7 +8,6 @@ import org.cross.medicore.shared.Sex;
 
 import java.lang.reflect.Field;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.HashMap;
 import java.util.Map;
@@ -75,6 +74,10 @@ public class Patient {
     @Enumerated(EnumType.STRING)
     @Getter
     private PatientStatus status;
+
+    @Column(name = "user_id", unique = true, updatable = false, nullable = false)
+    @Setter @Getter
+    private long userId;
 
     public int getAgeYears(){
         if(birthDate == null){

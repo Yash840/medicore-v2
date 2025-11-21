@@ -21,7 +21,8 @@ public record PatientPublicDto(
         BloodGroup bloodGroup,
         Sex sex,
         PatientStatus status,
-        PatientAddressDto address
+        PatientAddressDto address,
+        long userId
 ) {
     public record PatientAddressDto(
             String street,
