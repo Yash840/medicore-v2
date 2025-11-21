@@ -10,21 +10,25 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class PatientMapper {
-    public Patient toPatient(CreatePatientDto createPatientDto) {
+    public static String normalizeText(String str){
+        return str.trim().replaceAll("\\s+", "");
+    }
+
+    public static Patient toPatient(CreatePatientDto createPatientDto) {
         if (createPatientDto == null) {
             return null;
         }
         Patient patient = new Patient();
-        patient.setFirstName(createPatientDto.firstName());
-        patient.setLastName(createPatientDto.lastName());
-        patient.setMiddleName(createPatientDto.middleName());
+        patient.setFirstName(normalizeText(createPatientDto.firstName()));
+        patient.setLastName(normalizeText(createPatientDto.lastName()));
+        patient.setMiddleName(normalizeText(createPatientDto.middleName()));
         patient.setPhoneNumber(createPatientDto.phoneNumber());
-        patient.setEmail(createPatientDto.email());
+        patient.setEmail(createPatientDto.email().toLowerCase());
         patient.setBirthDate(createPatientDto.birthDate());
         return patient;
     }
 
-    public PatientBriefProfile toPatientBriefProfile(Patient patient) {
+    public static PatientBriefProfile toPatientBriefProfile(Patient patient) {
         if (patient == null) {
             return null;
         }
@@ -39,7 +43,7 @@ public class PatientMapper {
         );
     }
 
-    public PatientPublicDto toPatientPublicDto(Patient patient) {
+    public static PatientPublicDto toPatientPublicDto(Patient patient) {
         if (patient == null) {
             return null;
         }
@@ -62,21 +66,44 @@ public class PatientMapper {
         );
     }
 
-    public void updatePatientFromDto(UpdatePatientInfoDto dto, Patient patient) {
+    public static void updatePatientFromDto(UpdatePatientInfoDto dto, Patient patient) {
         if (dto == null || patient == null) {
             return;
         }
-        patient.setFirstName(dto.firstName());
-        patient.setLastName(dto.lastName());
-        patient.setMiddleName(dto.middleName());
-        patient.setEmail(dto.email());
-        patient.setPhoneNumber(dto.phoneNumber());
-        patient.setBirthDate(dto.birthDate());
-        patient.setHeight(dto.height());
-        patient.setWeight(dto.weight());
-        patient.setAadhaar(dto.aadhaar());
-        patient.setBloodGroup(dto.bloodGroup());
-        patient.setSex(dto.sex());
+
+        if (dto.firstName() != null) {
+            patient.setFirstName(dto.firstName());
+        }
+        if (dto.lastName() != null) {
+            patient.setLastName(dto.lastName());
+        }
+        if (dto.middleName() != null) {
+            patient.setMiddleName(dto.middleName());
+        }
+        if (dto.email() != null) {
+            patient.setEmail(dto.email());
+        }
+        if (dto.phoneNumber() != null) {
+            patient.setPhoneNumber(dto.phoneNumber());
+        }
+        if (dto.birthDate() != null) {
+            patient.setBirthDate(dto.birthDate());
+        }
+        if (dto.height() > 0) {
+            patient.setHeight(dto.height());
+        }
+        if (dto.weight() > 0) {
+            patient.setWeight(dto.weight());
+        }
+        if (dto.aadhaar() != null) {
+            patient.setAadhaar(dto.aadhaar());
+        }
+        if (dto.bloodGroup() != null) {
+            patient.setBloodGroup(dto.bloodGroup());
+        }
+        if (dto.sex() != null) {
+            patient.setSex(dto.sex());
+        }
 
         if (dto.address() != null) {
             if (patient.getAddress() == null) {
@@ -86,7 +113,7 @@ public class PatientMapper {
         }
     }
 
-    private PatientPublicDto.PatientAddressDto toPatientAddressDto(PatientAddress address) {
+    private static PatientPublicDto.PatientAddressDto toPatientAddressDto(PatientAddress address) {
         if (address == null) {
             return null;
         }
@@ -103,18 +130,36 @@ public class PatientMapper {
         );
     }
 
-    private void updatePatientAddressFromDto(UpdatePatientInfoDto.PatientAddressDto dto, PatientAddress address) {
+    private static void updatePatientAddressFromDto(UpdatePatientInfoDto.PatientAddressDto dto, PatientAddress address) {
         if (dto == null || address == null) {
             return;
         }
-        address.setStreet(dto.street());
-        address.setBuilding(dto.building());
-        address.setLandmark(dto.landmark());
-        address.setFlat(dto.flat());
-        address.setTown(dto.town());
-        address.setCity(dto.city());
-        address.setState(dto.state());
-        address.setCountry(dto.country());
-        address.setZipCode(dto.zipCode());
+        if (dto.street() != null) {
+            address.setStreet(dto.street());
+        }
+        if (dto.building() != null) {
+            address.setBuilding(dto.building());
+        }
+        if (dto.landmark() != null) {
+            address.setLandmark(dto.landmark());
+        }
+        if (dto.flat() != null) {
+            address.setFlat(dto.flat());
+        }
+        if (dto.town() != null) {
+            address.setTown(dto.town());
+        }
+        if (dto.city() != null) {
+            address.setCity(dto.city());
+        }
+        if (dto.state() != null) {
+            address.setState(dto.state());
+        }
+        if (dto.country() != null) {
+            address.setCountry(dto.country());
+        }
+        if (dto.zipCode() != null) {
+            address.setZipCode(dto.zipCode());
+        }
     }
 }

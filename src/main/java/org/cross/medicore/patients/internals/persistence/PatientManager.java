@@ -10,7 +10,7 @@ public class PatientManager {
     @PersistenceContext
     EntityManager em;
 
-    Patient getPatientRef(long id){
+    public Patient getPatientRef(long id){
         return em.getReference(Patient.class, id);
     }
 }
