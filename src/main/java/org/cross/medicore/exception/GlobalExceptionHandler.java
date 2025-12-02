@@ -22,7 +22,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(PatientNotFoundException.class)
     public ResponseEntity<ErrorResponse> handlePatientNotFoundException(
             HttpServletRequest request,
-            InvalidDetailsException ex){
+            PatientNotFoundException ex){
+        String path = request.getRequestURI();
+
+        ErrorResponse errorResponse = new ErrorResponse(path, false, ex.getMessage(), "v1.0.0");
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ProviderNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleProviderNotFoundException(
+            HttpServletRequest request,
+            ProviderNotFoundException ex){
         String path = request.getRequestURI();
 
         ErrorResponse errorResponse = new ErrorResponse(path, false, ex.getMessage(), "v1.0.0");
