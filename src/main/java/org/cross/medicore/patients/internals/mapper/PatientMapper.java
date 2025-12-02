@@ -2,8 +2,8 @@ package org.cross.medicore.patients.internals.mapper;
 
 import org.cross.medicore.patients.api.dto.PatientBriefProfile;
 import org.cross.medicore.patients.api.dto.PatientPublicDto;
-import org.cross.medicore.patients.internals.dto.CreatePatientDto;
-import org.cross.medicore.patients.internals.dto.UpdatePatientInfoDto;
+import org.cross.medicore.patients.api.dto.CreatePatientDto;
+import org.cross.medicore.patients.api.dto.UpdatePatientInfoDto;
 import org.cross.medicore.patients.internals.entity.Patient;
 import org.cross.medicore.patients.internals.entity.PatientAddress;
 import org.springframework.stereotype.Component;

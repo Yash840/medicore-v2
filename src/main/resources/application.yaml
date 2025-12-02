@@ -3,5 +3,17 @@ server:
     10001
 
 spring:
+  output:
+    ansi:
+      enabled: ALWAYS
   application:
     name: medicore
+  datasource:
+    url: jdbc:mysql://localhost:4000/medicore_db
+    username: root
+    password: "Cross@420"
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+logging:
+  file:
+    name: ./app.log

@@ -1,4 +1,4 @@
-package org.cross.medicore.patients.internals.dto;
+package org.cross.medicore.patients.api.dto;
 
 import java.time.LocalDate;
 
