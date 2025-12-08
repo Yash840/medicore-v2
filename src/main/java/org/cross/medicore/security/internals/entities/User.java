@@ -2,6 +2,8 @@ package org.cross.medicore.security.internals.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -9,6 +11,7 @@ import java.time.LocalDate;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,6 +26,7 @@ public class User {
 
     @ManyToOne()
     @JoinColumn(name = "role_id")
+    @Setter
     private Role role;
 
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -32,4 +36,10 @@ public class User {
     @Column(name = "updated_at")
     @LastModifiedDate
     private LocalDate updatedAt;
+
+    public User(String username, String hashedPassword, Role role) {
+        this.username = username;
+        this.hashedPassword = hashedPassword;
+        this.role = role;
+    }
 }
