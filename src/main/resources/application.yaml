@@ -13,6 +13,10 @@ spring:
     username: root
     password: "Cross@420"
     driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      properties:
+        ddl-auto: update
 
 logging:
   file:

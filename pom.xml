@@ -78,6 +78,17 @@
 			<artifactId>spring-modulith-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-security -->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-security</artifactId>-->
+<!--            <version>4.0.0</version>-->
+<!--        </dependency>-->
+        <dependency>
+            <groupId>at.favre.lib</groupId>
+            <artifactId>bcrypt</artifactId>
+            <version>0.10.2</version>
+        </dependency>
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>
