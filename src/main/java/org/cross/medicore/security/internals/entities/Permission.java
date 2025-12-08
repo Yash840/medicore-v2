@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.cross.medicore.security.internals.constants.PermissionName;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -28,6 +29,17 @@ public class Permission {
     public void addRole(Role role){
         if(!Objects.isNull(role))
             roles.add(role);
+    }
+
+    public static Permission of(PermissionName name){
+        return new Permission(name);
+    }
+
+    public static Permission of(PermissionName name, List<Role> roles){
+        Permission permission =  Permission.of(name);
+        roles.forEach(permission::addRole);
+
+        return permission;
     }
 
     // TODO : Add toGrantedAuthority Method.
