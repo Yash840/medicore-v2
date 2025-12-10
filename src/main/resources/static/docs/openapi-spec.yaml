@@ -1,0 +1,1104 @@
+openapi: 3.0.3
+info:
+  title: Medicore API
+  description: Healthcare management system API for managing patients, providers, appointments, and clinical encounters
+  version: 2.0.0
+  contact:
+    name: Medicore Support
+    email: support@medicore.org
+
+servers:
+  - url: http://localhost:10001
+    description: Local development server
+
+tags:
+  - name: Authentication
+    description: User authentication endpoints
+  - name: Patient Management
+    description: APIs for managing patient information
+  - name: Provider Management
+    description: APIs for managing healthcare providers
+  - name: Provider Schedules
+    description: APIs for managing provider work schedules
+  - name: Scheduling
+    description: APIs for managing appointments and available slots
+  - name: Clinical Management
+    description: APIs for managing clinical encounters, medications, and vitals
+
+security:
+  - bearerAuth: []
+
+paths:
+  /api/v1/auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: User login
+      description: Authenticate user and receive JWT token
+      operationId: loginUser
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLoginRequestDto'
+      responses:
+        '200':
+          description: Successfully authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginSuccessDto'
+        '400':
+          description: Bad request
+        '401':
+          description: Invalid credentials
+
+  /api/v1/services/patients/{patientId}:
+    get:
+      tags:
+        - Patient Management
+      summary: Get patient details
+      description: Retrieve detailed information about a specific patient
+      operationId: getPatientDetails
+      parameters:
+        - name: patientId
+          in: path
+          description: Patient ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Patient details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponsePatientPublicDto'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Patient not found
+
+    patch:
+      tags:
+        - Patient Management
+      summary: Update patient details
+      description: Update patient information
+      operationId: updatePatientDetails
+      parameters:
+        - name: patientId
+          in: path
+          description: Patient ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePatientInfoDto'
+      responses:
+        '200':
+          description: Patient updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponsePatientPublicDto'
+        '400':
+          description: Invalid request data
+        '404':
+          description: Patient not found
+
+    delete:
+      tags:
+        - Patient Management
+      summary: Delete patient
+      description: Remove a patient from the system
+      operationId: deletePatient
+      parameters:
+        - name: patientId
+          in: path
+          description: Patient ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Patient deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponsePatientPublicDto'
+        '404':
+          description: Patient not found
+
+  /api/v1/services/patients:
+    post:
+      tags:
+        - Patient Management
+      summary: Create new patient
+      description: Register a new patient with credentials
+      operationId: createPatient
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePatientRequest'
+      responses:
+        '201':
+          description: Patient created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponsePatientBriefProfile'
+        '400':
+          description: Invalid request data
+        '409':
+          description: Patient already exists
+
+  /api/v1/services/providers/{providerId}:
+    get:
+      tags:
+        - Provider Management
+      summary: Get provider details
+      description: Retrieve detailed information about a specific healthcare provider
+      operationId: getProviderDetails
+      parameters:
+        - name: providerId
+          in: path
+          description: Provider ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Provider details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseProviderDetails'
+        '404':
+          description: Provider not found
+
+    patch:
+      tags:
+        - Provider Management
+      summary: Update provider details
+      description: Update healthcare provider information
+      operationId: updateProviderDetails
+      parameters:
+        - name: providerId
+          in: path
+          description: Provider ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProviderDetailsDto'
+      responses:
+        '200':
+          description: Provider updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseProviderDetails'
+        '400':
+          description: Invalid request data
+        '404':
+          description: Provider not found
+
+    delete:
+      tags:
+        - Provider Management
+      summary: Delete provider
+      description: Remove a healthcare provider from the system
+      operationId: deleteProvider
+      parameters:
+        - name: providerId
+          in: path
+          description: Provider ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Provider deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseProviderDetails'
+        '404':
+          description: Provider not found
+
+  /api/v1/services/providers:
+    post:
+      tags:
+        - Provider Management
+      summary: Create new provider
+      description: Register a new healthcare provider with credentials
+      operationId: createProvider
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProviderRequest'
+      responses:
+        '201':
+          description: Provider created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseProviderBriefProfile'
+        '400':
+          description: Invalid request data
+        '409':
+          description: Provider already exists
+
+  /api/v1/services/scheduling/provider-schedules/{scheduleId}:
+    get:
+      tags:
+        - Provider Schedules
+      summary: Get provider schedule by ID
+      description: Retrieve provider schedule details by schedule ID
+      operationId: getProviderScheduleById
+      parameters:
+        - name: scheduleId
+          in: path
+          description: Schedule ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Schedule details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseProviderScheduleDetailsDto'
+        '404':
+          description: Schedule not found
+
+  /api/v1/services/scheduling/provider-schedules/provider/{providerId}:
+    get:
+      tags:
+        - Provider Schedules
+      summary: Get provider schedule by date
+      description: Retrieve provider schedule for a specific date
+      operationId: getProviderScheduleByProviderAndDate
+      parameters:
+        - name: providerId
+          in: path
+          description: Provider ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: date
+          in: query
+          description: Date in ISO format (YYYY-MM-DD)
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Schedule details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseProviderScheduleDetailsDto'
+        '404':
+          description: Schedule not found
+
+  /api/v1/services/scheduling/provider-schedules:
+    post:
+      tags:
+        - Provider Schedules
+      summary: Create provider schedule
+      description: Create a new work schedule for a provider
+      operationId: createProviderSchedule
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProviderScheduleDto'
+      responses:
+        '201':
+          description: Schedule created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseProviderScheduleDetailsDto'
+        '400':
+          description: Invalid schedule data
+        '409':
+          description: Schedule already exists for this date
+
+  /api/v1/services/scheduling/slots/provider/{providerId}:
+    get:
+      tags:
+        - Scheduling
+      summary: Get available slots
+      description: Retrieve available time slots for a provider at a specific date/time
+      operationId: getAvailableSlots
+      parameters:
+        - name: providerId
+          in: path
+          description: Provider ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: time
+          in: query
+          description: Date and time in ISO format
+          required: true
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Available slots retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseSlotInfoList'
+        '404':
+          description: Provider not found
+
+  /api/v1/services/scheduling/appointments:
+    post:
+      tags:
+        - Scheduling
+      summary: Schedule appointment
+      description: Create a new appointment for a patient with a provider
+      operationId: scheduleAppointment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScheduleAppointmentDto'
+      responses:
+        '201':
+          description: Appointment scheduled successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseAppointmentDetailsDto'
+        '400':
+          description: Invalid request data
+        '409':
+          description: Slot not available
+
+  /api/v1/services/scheduling/appointments/{appointmentId}:
+    get:
+      tags:
+        - Scheduling
+      summary: Get appointment details
+      description: Retrieve details of a specific appointment
+      operationId: getAppointmentDetails
+      parameters:
+        - name: appointmentId
+          in: path
+          description: Appointment ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Appointment details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseAppointmentDetailsDto'
+        '404':
+          description: Appointment not found
+
+  /api/v1/services/scheduling/appointments/patient/{patientId}:
+    get:
+      tags:
+        - Scheduling
+      summary: Get patient appointments
+      description: Retrieve all appointments for a specific patient
+      operationId: getAppointmentDetailsForPatient
+      parameters:
+        - name: patientId
+          in: path
+          description: Patient ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Patient appointments retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseAppointmentDetailsDtoList'
+        '404':
+          description: Patient not found
+
+  /api/v1/services/clinicals/encounters/appointment/{appointmentId}:
+    post:
+      tags:
+        - Clinical Management
+      summary: Begin encounter
+      description: Start a clinical encounter for an appointment
+      operationId: beginEncounter
+      parameters:
+        - name: appointmentId
+          in: path
+          description: Appointment ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '201':
+          description: Encounter created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseLong'
+        '400':
+          description: Invalid appointment state
+        '404':
+          description: Appointment not found
+
+  /api/v1/services/clinicals/encounters/{encounterId}:
+    get:
+      tags:
+        - Clinical Management
+      summary: Get encounter by ID
+      description: Retrieve encounter details by encounter ID
+      operationId: getEncounterDetailsByEncounterId
+      parameters:
+        - name: encounterId
+          in: path
+          description: Encounter ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Encounter details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseEncounterDetails'
+        '404':
+          description: Encounter not found
+
+  /api/v1/services/clinicals/encounters/appointment/{appointmentId}:
+    get:
+      tags:
+        - Clinical Management
+      summary: Get encounter by appointment
+      description: Retrieve encounter details by appointment ID
+      operationId: getEncounterDetailsByAppointmentId
+      parameters:
+        - name: appointmentId
+          in: path
+          description: Appointment ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Encounter details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseEncounterDetails'
+        '404':
+          description: Encounter not found
+
+  /api/v1/services/clinicals/encounters/{encounterId}/end:
+    patch:
+      tags:
+        - Clinical Management
+      summary: End encounter
+      description: End an active clinical encounter
+      operationId: endEncounter
+      parameters:
+        - name: encounterId
+          in: path
+          description: Encounter ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Encounter ended successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseEncounterDetails'
+        '400':
+          description: Encounter already ended
+        '404':
+          description: Encounter not found
+
+  /api/v1/services/clinicals/encounters/{encounterId}/medications:
+    post:
+      tags:
+        - Clinical Management
+      summary: Add medications
+      description: Add medications to an encounter
+      operationId: addMedications
+      parameters:
+        - name: encounterId
+          in: path
+          description: Encounter ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/AddMedicationDto'
+      responses:
+        '200':
+          description: Medications added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseEncounterDetails'
+        '400':
+          description: Invalid medication data
+        '404':
+          description: Encounter not found
+
+  /api/v1/services/clinicals/encounters/{encounterId}/vitals:
+    post:
+      tags:
+        - Clinical Management
+      summary: Add vitals
+      description: Add vital signs to an encounter
+      operationId: addVitals
+      parameters:
+        - name: encounterId
+          in: path
+          description: Encounter ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateVitalsDto'
+      responses:
+        '200':
+          description: Vitals added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseEncounterDetails'
+        '400':
+          description: Invalid vitals data
+        '404':
+          description: Encounter not found
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token for authentication
+
+  schemas:
+    UserLoginRequestDto:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          description: Username for authentication
+        password:
+          type: string
+          format: password
+          description: Password for authentication
+
+    LoginSuccessDto:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Login timestamp
+        success:
+          type: boolean
+          description: Login success status
+
+    UserCredsDto:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+          format: password
+
+    CreatePatientRequest:
+      type: object
+      required:
+        - createPatientDto
+        - creds
+      properties:
+        createPatientDto:
+          $ref: '#/components/schemas/CreatePatientDto'
+        creds:
+          $ref: '#/components/schemas/UserCredsDto'
+
+    CreatePatientDto:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        dateOfBirth:
+          type: string
+          format: date
+        sex:
+          type: string
+          enum: [MALE, FEMALE, OTHER]
+        bloodGroup:
+          type: string
+          enum: [A_POSITIVE, A_NEGATIVE, B_POSITIVE, B_NEGATIVE, AB_POSITIVE, AB_NEGATIVE, O_POSITIVE, O_NEGATIVE]
+        email:
+          type: string
+          format: email
+        phoneNumber:
+          type: string
+
+    UpdatePatientInfoDto:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        phoneNumber:
+          type: string
+        address:
+          type: string
+
+    PatientPublicDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        firstName:
+          type: string
+        lastName:
+          type: string
+        dateOfBirth:
+          type: string
+          format: date
+        sex:
+          type: string
+        bloodGroup:
+          type: string
+        email:
+          type: string
+        phoneNumber:
+          type: string
+
+    PatientBriefProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        firstName:
+          type: string
+        lastName:
+          type: string
+
+    CreateProviderRequest:
+      type: object
+      required:
+        - createProviderDto
+        - creds
+      properties:
+        createProviderDto:
+          $ref: '#/components/schemas/CreateProviderDto'
+        creds:
+          $ref: '#/components/schemas/UserCredsDto'
+
+    CreateProviderDto:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        specialization:
+          type: string
+        email:
+          type: string
+          format: email
+        phoneNumber:
+          type: string
+
+    UpdateProviderDetailsDto:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        phoneNumber:
+          type: string
+        specialization:
+          type: string
+
+    ProviderDetails:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        firstName:
+          type: string
+        lastName:
+          type: string
+        specialization:
+          type: string
+        email:
+          type: string
+        phoneNumber:
+          type: string
+
+    ProviderBriefProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        firstName:
+          type: string
+        lastName:
+          type: string
+        specialization:
+          type: string
+
+    CreateProviderScheduleDto:
+      type: object
+      properties:
+        providerId:
+          type: integer
+          format: int64
+        date:
+          type: string
+          format: date
+        startTime:
+          type: string
+          format: time
+        endTime:
+          type: string
+          format: time
+        slotDurationMinutes:
+          type: integer
+
+    ProviderScheduleDetailsDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        providerId:
+          type: integer
+          format: int64
+        date:
+          type: string
+          format: date
+        startTime:
+          type: string
+          format: time
+        endTime:
+          type: string
+          format: time
+        slotDurationMinutes:
+          type: integer
+
+    SlotInfo:
+      type: object
+      properties:
+        slotId:
+          type: integer
+          format: int64
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        available:
+          type: boolean
+
+    ScheduleAppointmentDto:
+      type: object
+      properties:
+        patientId:
+          type: integer
+          format: int64
+        providerId:
+          type: integer
+          format: int64
+        slotId:
+          type: integer
+          format: int64
+        reason:
+          type: string
+
+    AppointmentDetailsDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        patientId:
+          type: integer
+          format: int64
+        providerId:
+          type: integer
+          format: int64
+        slotId:
+          type: integer
+          format: int64
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        reason:
+          type: string
+        status:
+          type: string
+
+    EncounterDetails:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        appointmentId:
+          type: integer
+          format: int64
+        patientId:
+          type: integer
+          format: int64
+        providerId:
+          type: integer
+          format: int64
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        medications:
+          type: array
+          items:
+            $ref: '#/components/schemas/MedicationDto'
+        vitals:
+          $ref: '#/components/schemas/VitalsDto'
+
+    AddMedicationDto:
+      type: object
+      properties:
+        name:
+          type: string
+        dosage:
+          type: string
+        frequency:
+          type: string
+        duration:
+          type: string
+
+    MedicationDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        dosage:
+          type: string
+        frequency:
+          type: string
+        duration:
+          type: string
+
+    UpdateVitalsDto:
+      type: object
+      properties:
+        bloodPressure:
+          type: string
+        heartRate:
+          type: integer
+        temperature:
+          type: number
+          format: double
+        weight:
+          type: number
+          format: double
+        height:
+          type: number
+          format: double
+
+    VitalsDto:
+      type: object
+      properties:
+        bloodPressure:
+          type: string
+        heartRate:
+          type: integer
+        temperature:
+          type: number
+          format: double
+        weight:
+          type: number
+          format: double
+        height:
+          type: number
+          format: double
+
+    ApiResponseV1:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+        path:
+          type: string
+        data:
+          type: object
+
+    ApiResponsePatientPublicDto:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponseV1'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/PatientPublicDto'
+
+    ApiResponsePatientBriefProfile:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponseV1'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/PatientBriefProfile'
+
+    ApiResponseProviderDetails:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponseV1'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/ProviderDetails'
+
+    ApiResponseProviderBriefProfile:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponseV1'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/ProviderBriefProfile'
+
+    ApiResponseProviderScheduleDetailsDto:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponseV1'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/ProviderScheduleDetailsDto'
+
+    ApiResponseSlotInfoList:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponseV1'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/SlotInfo'
+
+    ApiResponseAppointmentDetailsDto:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponseV1'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/AppointmentDetailsDto'
+
+    ApiResponseAppointmentDetailsDtoList:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponseV1'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/AppointmentDetailsDto'
+
+    ApiResponseEncounterDetails:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponseV1'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/EncounterDetails'
+
+    ApiResponseLong:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponseV1'
+        - type: object
+          properties:
+            data:
+              type: integer
+              format: int64
+
