@@ -6,6 +6,7 @@ import org.cross.medicore.security.internals.entities.Permission;
 import org.cross.medicore.security.internals.entities.Role;
 import org.cross.medicore.security.internals.persistence.RoleRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -15,12 +16,14 @@ import java.util.Objects;
 class RoleService {
     private final RoleRepository roleRepository;
 
+    @Transactional(readOnly = true)
     public Role getRole(RoleName roleName){
         return roleRepository.findByName(roleName)
                 .orElseThrow(() -> new RuntimeException("unknown role: " + roleName.toString()));
     }
 
     // If role already exists update it otherwise insert new one.
+    @Transactional
     public Role addRole(RoleName roleName, List<Permission> permissions){
         try {
             Role existingRole = getRole(roleName);

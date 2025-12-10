@@ -4,5 +4,6 @@ public enum RoleName {
     ROLE_PATIENT,
     ROLE_PROVIDER,
     ROLE_SCHEDULER,
-    ROLE_RECEPTION
+    ROLE_RECEPTION,
+    ROLE_ADMIN
 }
