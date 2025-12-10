@@ -31,11 +31,11 @@ public class Provider {
     @Setter
     private String email;
 
-    @Column(name = "phone_number", nullable = false, length = 20)
+    @Column(name = "phone_number", length = 20)
     @Setter
     private String phoneNumber;
 
-    @Column(name = "birth_date", nullable = false)
+    @Column(name = "birth_date")
     @Setter
     private LocalDate birthDate;
 
