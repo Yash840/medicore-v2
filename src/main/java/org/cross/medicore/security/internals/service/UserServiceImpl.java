@@ -1,6 +1,5 @@
 package org.cross.medicore.security.internals.service;
 
-import at.favre.lib.crypto.bcrypt.BCrypt;
 import lombok.RequiredArgsConstructor;
 import org.cross.medicore.exception.UserAlreadyExistException;
 import org.cross.medicore.exception.UserDoesNotExistException;
@@ -11,6 +10,7 @@ import org.cross.medicore.security.internals.entities.Role;
 import org.cross.medicore.security.internals.entities.User;
 import org.cross.medicore.security.internals.mapper.UserMapper;
 import org.cross.medicore.security.internals.persistence.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,11 +18,12 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
     private final RoleService roleService;
+    private final PasswordEncoder passwordEncoder;
 
     private User createUser(String username, String rawPassword, RoleName roleName){
         ensureUserDoesNotExist(username);
 
-        String hashedPassword = BCrypt.withDefaults().hashToString(12, rawPassword.toCharArray());
+        String hashedPassword = passwordEncoder.encode(rawPassword);
         Role role = roleService.getRole(roleName);
 
         User user = new User(username, hashedPassword, role);
@@ -65,15 +66,17 @@ public class UserServiceImpl implements UserService{
         return UserMapper.toUserDetailsDto(user);
     }
 
+    private boolean isValidPassword(String hash, String raw){
+        return passwordEncoder.matches(raw, hash);
+    }
+
     @Override
     public boolean validateUser(long userId, String rawPassword) {
         String storedHash = userRepository.findById(userId)
                 .map(User::getHashedPassword)
                 .orElseThrow(() -> new UserDoesNotExistException(userId));
 
-        BCrypt.Result result = BCrypt.verifyer().verify(rawPassword.toCharArray(), storedHash);
-
-        return result.verified;
+        return isValidPassword(storedHash, rawPassword);
     }
 
     @Override
@@ -82,9 +85,7 @@ public class UserServiceImpl implements UserService{
                 .map(User::getHashedPassword)
                 .orElseThrow(() -> new UserDoesNotExistException(username));
 
-        BCrypt.Result result = BCrypt.verifyer().verify(rawPassword.toCharArray(), storedHash);
-
-        return result.verified;
+        return isValidPassword(storedHash, rawPassword);
     }
 
     private void ensureUserDoesNotExist(String username){
