@@ -34,4 +34,3 @@ build/
 
 ### Confidentials ###
 .env
-app.log
