@@ -1,0 +1,18 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    url: jdbc:mysql://localhost:3306/medicore_db
+    username: yash
+    password: "Yash@420"
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+logging:
+  file:
+    name: ./app.log
+  level:
+    web: DEBUG

@@ -8,16 +8,3 @@ spring:
       enabled: ALWAYS
   application:
     name: medicore
-  datasource:
-    url: jdbc:mysql://localhost:4000/medicore_db
-    username: root
-    password: "Cross@420"
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  jpa:
-    hibernate:
-      properties:
-        ddl-auto: update
-
-logging:
-  file:
-    name: ./app.log
