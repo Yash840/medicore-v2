@@ -2,8 +2,7 @@ package org.cross.medicore.security.internals.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.cross.medicore.security.internals.constants.PermissionName;
+import lombok.NoArgsConstructor;
 import org.cross.medicore.security.internals.constants.RoleName;
 
 import java.util.HashSet;
@@ -13,7 +12,7 @@ import java.util.Set;
 
 @Entity
 @Getter
-@RequiredArgsConstructor
+@NoArgsConstructor
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -22,7 +21,7 @@ public class Role {
 
     @Column(name = "name", nullable = false, unique = true)
     @Enumerated(EnumType.STRING)
-    private final RoleName name;
+    private RoleName name;
 
     @OneToMany(mappedBy = "role")
     private List<User> users;
@@ -41,6 +40,10 @@ public class Role {
     public void addPermission(Permission permission){
         if(!Objects.isNull(permission))
             this.permissions.add(permission);
+    }
+
+    public Role(RoleName name) {
+        this.name = name;
     }
 
     public static Role of(RoleName roleName, List<Permission> permissions){

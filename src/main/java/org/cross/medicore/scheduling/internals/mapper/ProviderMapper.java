@@ -65,7 +65,8 @@ public class ProviderMapper {
                 provider.getSex(),
                 toProviderAddressDetails(provider.getAddress()),
                 provider.getSpecialization(),
-                provider.getMmcRegNumber()
+                provider.getMmcRegNumber(),
+                provider.getUserId()
         );
     }
 

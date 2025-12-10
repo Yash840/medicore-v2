@@ -37,7 +37,6 @@ public class ProviderSchedule {
     private List<Slot> slots;
 
     @OneToMany(mappedBy = "providerSchedule", cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy("Break.start ASC")
     @Setter
     private List<Break> breaks;
 

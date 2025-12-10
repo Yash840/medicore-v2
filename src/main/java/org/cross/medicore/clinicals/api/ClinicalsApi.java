@@ -1,9 +1,8 @@
-package org.cross.medicore.clinicals.api.constants;
+package org.cross.medicore.clinicals.api;
 
 import org.cross.medicore.clinicals.api.dto.AddMedicationDto;
 import org.cross.medicore.clinicals.api.dto.EncounterDetails;
 import org.cross.medicore.clinicals.api.dto.UpdateVitalsDto;
-import org.cross.medicore.clinicals.internals.entity.Medication;
 
 import java.util.List;
 

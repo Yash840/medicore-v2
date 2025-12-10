@@ -17,7 +17,8 @@ public record ProviderDetails(
         Sex sex,
         ProviderAddressDetails address,
         String specialization,
-        String mmcRegNumber
+        String mmcRegNumber,
+        long userId
 ) {
      public record ProviderAddressDetails(
              String street,

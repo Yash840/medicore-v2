@@ -19,7 +19,7 @@ public class SchedulingMapper {
     public static AppointmentDetailsDto toDto(Appointment appointment) {
         AppointmentDetailsDto.SlotDetailsDto slotDetails = new AppointmentDetailsDto.SlotDetailsDto(
                 appointment.getSlot().getSlotId(),
-                appointment.getSlot().getProviderScheduleId(),
+                appointment.getSlot().getProviderSchedule().getProviderId(),
                 appointment.getSlot().getStart(),
                 appointment.getSlot().getEnd()
         );

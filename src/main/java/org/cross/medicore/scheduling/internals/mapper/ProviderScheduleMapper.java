@@ -18,7 +18,7 @@ public class ProviderScheduleMapper {
         }
 
         ProviderSchedule schedule = new ProviderSchedule();
-        schedule.setProvider_id(dto.providerId());
+        schedule.setProviderId(dto.providerId());
         schedule.setScheduleDate(dto.scheduleDate());
         schedule.setScheduleStartTime(dto.scheduleStartTime());
         schedule.setScheduleEndTime(dto.scheduleEndTime());
@@ -78,7 +78,7 @@ public class ProviderScheduleMapper {
         }
 
         return new CreateProviderScheduleDto(
-                schedule.getProvider_id(),
+                schedule.getProviderId(),
                 schedule.getScheduleDate(),
                 schedule.getScheduleStartTime(),
                 schedule.getScheduleEndTime(),
@@ -93,7 +93,7 @@ public class ProviderScheduleMapper {
 
         return new ProviderScheduleDetailsDto(
                 schedule.getId(),
-                schedule.getProvider_id(),
+                schedule.getProviderId(),
                 schedule.getScheduleDate(),
                 schedule.getScheduleStartTime(),
                 schedule.getScheduleEndTime(),

@@ -2,7 +2,9 @@ package org.cross.medicore.scheduling.internals.service;
 
 import lombok.RequiredArgsConstructor;
 import org.cross.medicore.exception.SlotNotFoundException;
+import org.cross.medicore.scheduling.api.constants.SlotStatus;
 import org.cross.medicore.scheduling.api.dto.SlotDetails;
+import org.cross.medicore.scheduling.api.dto.SlotInfo;
 import org.cross.medicore.scheduling.internals.entity.Slot;
 import org.cross.medicore.scheduling.internals.persistence.SlotRepository;
 import org.springframework.stereotype.Service;
@@ -18,12 +20,13 @@ public class SlotServiceImpl implements SlotService{
     @Override
     public void addSlots(List<Slot> slots) {
         List<Slot> savedSlots = slotRepository.saveAll(slots);
-
     }
 
     @Override
-    public List<SlotDetails> getAvailableSlotsByProviderAndTime(long providerId, LocalDateTime requiredTime) {
-        return List.of();
+    public List<SlotInfo> getAvailableSlotsByProviderAndTime(long providerId, LocalDateTime requiredTime) {
+        LocalDateTime rangeStart = requiredTime.minusMinutes(10);
+        LocalDateTime rangeEnd = requiredTime.plusMinutes(10);
+        return slotRepository.findByProviderIdAndSlotStatusAndStartBetweenOrderByStartAsc(providerId, SlotStatus.FREE, rangeStart, rangeEnd);
     }
 
     @Override

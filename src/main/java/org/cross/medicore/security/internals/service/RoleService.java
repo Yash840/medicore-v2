@@ -17,22 +17,20 @@ class RoleService {
 
     public Role getRole(RoleName roleName){
         return roleRepository.findByName(roleName)
-                .orElseThrow(() -> new RuntimeException("unknown role"));
+                .orElseThrow(() -> new RuntimeException("unknown role: " + roleName.toString()));
     }
 
     // If role already exists update it otherwise insert new one.
-    public Role createRole(RoleName roleName, List<Permission> permissions){
-        Role existingRole = getRole(roleName);
-
-        //Role already exists, add extra permissions and save
-        if(!Objects.isNull(existingRole)){
+    public Role addRole(RoleName roleName, List<Permission> permissions){
+        try {
+            Role existingRole = getRole(roleName);
+            //Role already exists, add extra permissions and save
             permissions.forEach(existingRole::addPermission);
-
             return roleRepository.save(existingRole);
+        } catch (Exception e) {
+            //Create new one
+            Role role = Role.of(roleName, permissions);
+            return roleRepository.save(role);
         }
-
-        //Create new one
-        Role role = Role.of(roleName, permissions);
-        return roleRepository.save(role);
     }
 }

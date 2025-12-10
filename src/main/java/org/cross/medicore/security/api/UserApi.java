@@ -1,5 +1,6 @@
 package org.cross.medicore.security.api;
 
+import org.cross.medicore.security.api.dto.DeletedUserInfo;
 import org.cross.medicore.security.api.dto.UserDetailsDto;
 
 /**
@@ -55,4 +56,6 @@ public interface UserApi {
      * @return true if the supplied password is valid for the user with the given id, false otherwise
      */
     boolean validateUser(long userId, String rawPassword);
+
+    DeletedUserInfo deleteUser(long userId);
 }

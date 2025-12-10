@@ -4,6 +4,7 @@ import at.favre.lib.crypto.bcrypt.BCrypt;
 import lombok.RequiredArgsConstructor;
 import org.cross.medicore.exception.UserAlreadyExistException;
 import org.cross.medicore.exception.UserDoesNotExistException;
+import org.cross.medicore.security.api.dto.DeletedUserInfo;
 import org.cross.medicore.security.api.dto.UserDetailsDto;
 import org.cross.medicore.security.internals.constants.RoleName;
 import org.cross.medicore.security.internals.entities.Role;
@@ -41,6 +42,11 @@ public class UserServiceImpl implements UserService{
         User createdUser = createUser(username, rawPassword, RoleName.ROLE_PROVIDER);
 
         return UserMapper.toUserDetailsDto(createdUser);
+    }
+
+    @Override
+    public DeletedUserInfo deleteUser(long userId) {
+        return userRepository.deleteAndReturnUserInfo(userId);
     }
 
     @Override

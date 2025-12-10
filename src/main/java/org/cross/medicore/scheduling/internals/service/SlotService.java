@@ -1,15 +1,13 @@
 package org.cross.medicore.scheduling.internals.service;
 
-import org.cross.medicore.scheduling.api.dto.SlotDetails;
+import org.cross.medicore.scheduling.api.SlotApi;
 import org.cross.medicore.scheduling.internals.entity.Slot;
 
-import java.time.LocalDateTime;
+
 import java.util.List;
 
-public interface SlotService {
+public interface SlotService extends SlotApi {
     Slot getSlotById(long slotId);
 
     void addSlots(List<Slot> slots);
-
-    List<SlotDetails> getAvailableSlotsByProviderAndTime(long providerId, LocalDateTime requiredTime);
 }

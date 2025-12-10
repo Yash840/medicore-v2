@@ -7,7 +7,5 @@ import org.cross.medicore.patients.api.dto.CreatePatientDto;
 import org.cross.medicore.patients.api.dto.UpdatePatientInfoDto;
 
 interface PatientService extends PatientApi {
-    PatientBriefProfile registerPatient(CreatePatientDto dto);
-    PatientPublicDto updatePatientInfo(long patientId, UpdatePatientInfoDto dto);
-    PatientPublicDto deletePatient(long patientId);
+
 }

@@ -29,9 +29,8 @@ public class User {
     @Setter
     private Role role;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    @CreatedDate
-    private LocalDate createdAt;
+    @Column(name = "created_at",nullable = false, updatable = false)
+    private LocalDate createdAt = LocalDate.now();
 
     @Column(name = "updated_at")
     @LastModifiedDate

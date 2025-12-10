@@ -19,8 +19,9 @@ public class ProviderServiceImpl implements ProviderService {
 
     @Override
     @Transactional
-    public ProviderBriefProfile createProvider(CreateProviderDto dto) {
+    public ProviderBriefProfile createProvider(CreateProviderDto dto, long userId) {
         Provider provider = ProviderMapper.toProvider(dto);
+        provider.setUserId(userId);
 
         Provider saved = providerRepository.save(provider);
 

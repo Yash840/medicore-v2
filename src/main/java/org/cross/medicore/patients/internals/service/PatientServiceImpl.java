@@ -1,6 +1,7 @@
 package org.cross.medicore.patients.internals.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.cross.medicore.exception.PatientNotFoundException;
 import org.cross.medicore.patients.api.dto.PatientBriefProfile;
 import org.cross.medicore.patients.api.dto.PatientPublicDto;
@@ -20,15 +21,25 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 class PatientServiceImpl implements PatientService{
     private final PatientRepository patientRepository;
     private final PatientManager patientManager;
 
     @Override
     @Transactional
-    public PatientBriefProfile registerPatient(CreatePatientDto dto) {
-           Patient patient = patientRepository.save(PatientMapper.toPatient(dto));
-           return PatientMapper.toPatientBriefProfile(patient);
+    public PatientBriefProfile registerPatient(CreatePatientDto dto, long userId) {
+           log.info("registerPatient: attempt to register patient with userId {} and details {}", userId, dto);
+
+            Patient patient = PatientMapper.toPatient(dto);
+            patient.setUserId(userId);
+
+            Patient saved = patientRepository.save(patient);
+
+            // TODO: Remove this log after testing
+            log.info("registerPatient: patient saved in db Patient: {}", saved);
+
+            return PatientMapper.toPatientBriefProfile(saved);
     }
 
     @Override

@@ -1,6 +1,7 @@
-package org.cross.medicore.scheduling.internals;
+package org.cross.medicore.scheduling.api.dto;
 
 import org.cross.medicore.scheduling.api.constants.SlotStatus;
+import org.cross.medicore.scheduling.internals.AppointmentInfo;
 
 import java.time.LocalDateTime;
 
