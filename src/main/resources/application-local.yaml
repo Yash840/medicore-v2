@@ -12,7 +12,5 @@ spring:
       ddl-auto: update
 
 logging:
-  file:
-    name: ./app.log
   level:
     web: DEBUG
