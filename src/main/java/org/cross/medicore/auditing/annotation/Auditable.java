@@ -1,4 +1,4 @@
-package org.cross.medicore.auditing.annotations;
+package org.cross.medicore.auditing.annotation;
 
 import org.cross.medicore.shared.Action;
 

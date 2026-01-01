@@ -1,15 +1,45 @@
 package org.cross.medicore.shared;
 
 public enum Action {
+    // Patient Actions
+    CREATE_PATIENT,
     READ_PATIENT_DETAILS,
     MODIFY_PATIENT_DETAILS,
+    DELETE_PATIENT,
+
+    // Provider Actions
+    CREATE_PROVIDER,
+    READ_PROVIDER_DETAILS,
+    MODIFY_PROVIDER_DETAILS,
+    DELETE_PROVIDER,
+
+    // Scheduling Actions
     SCHEDULE_APPOINTMENT,
+    READ_APPOINTMENT_DETAILS,
+    CANCEL_APPOINTMENT,
+    CONSUME_APPOINTMENT,
+
+    // Encounter Actions
     BEGIN_ENCOUNTER,
     END_ENCOUNTER,
-    CANCEL_APPOINTMENT,
+    READ_ENCOUNTER_DETAILS,
+    MODIFY_ENCOUNTER_DETAILS,
+
+    // Clinical Actions
+    ADD_MEDICATIONS,
+    ADD_VITALS,
     MODIFY_PRESCRIPTION,
     MODIFY_VITALS,
-    ADD_PROVIDER,
-    ADD_PROVIDER_SCHEDULE,
-    READ_ENCOUNTER_DETAILS
+
+    // Provider Schedule Actions
+    CREATE_PROVIDER_SCHEDULE,
+    READ_PROVIDER_SCHEDULE,
+
+    // User Actions
+    CREATE_USER,
+    DELETE_USER,
+    READ_USER_DETAILS,
+
+    // Slot Actions
+    READ_SLOT_DETAILS
 }

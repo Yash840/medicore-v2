@@ -1,6 +1,7 @@
 package org.cross.medicore.scheduling.internals.service;
 
 import lombok.RequiredArgsConstructor;
+import org.cross.medicore.auditing.annotation.Auditable;
 import org.cross.medicore.exception.AppointmentNotFoundException;
 import org.cross.medicore.exception.InvalidAppointmentException;
 import org.cross.medicore.scheduling.api.constants.AppointmentStatus;
@@ -11,6 +12,7 @@ import org.cross.medicore.scheduling.internals.entity.Appointment;
 import org.cross.medicore.scheduling.internals.entity.Slot;
 import org.cross.medicore.scheduling.internals.mapper.SchedulingMapper;
 import org.cross.medicore.scheduling.internals.persistence.AppointmentRepository;
+import org.cross.medicore.shared.Action;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +25,7 @@ public class SchedulingServiceImpl implements SchedulingService{
     private final AppointmentRepository appointmentRepository;
     private final SlotService slotService;
 
+    @Auditable(action = Action.SCHEDULE_APPOINTMENT, message = "Scheduled appointment for patientId: ?1.patientId with providerId: ?1.providerId on slotId: ?1.slotId")
     @Override
     @Transactional
     public AppointmentDetailsDto scheduleAppointment(ScheduleAppointmentDto dto) {
@@ -35,6 +38,7 @@ public class SchedulingServiceImpl implements SchedulingService{
 
         return SchedulingMapper.toDto(saved);
     }
+    @Auditable(action = Action.READ_APPOINTMENT_DETAILS, message = "Fetched appointment details for appointmentId: ?1")
 
     @Override
     @Transactional(readOnly = true)
@@ -97,6 +101,7 @@ public class SchedulingServiceImpl implements SchedulingService{
 
     @Override
     @Transactional
+    @Auditable(action = Action.CONSUME_APPOINTMENT, message = "Consumed appointment with appointmentId: ?1")
     public void consumeAppointment(long appointmentId) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new AppointmentNotFoundException(appointmentId));

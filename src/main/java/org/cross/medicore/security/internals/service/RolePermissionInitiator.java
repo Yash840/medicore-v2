@@ -18,6 +18,7 @@ import java.util.List;
 public class RolePermissionInitiator implements ApplicationRunner {
     private final PermissionService permissionService;
     private final RoleService roleService;
+    private final UserServiceImpl userService;
 
     private void initiatePermissions(){
         List<PermissionName> permissionNameList = List.of(PermissionName.values());
@@ -68,5 +69,19 @@ public class RolePermissionInitiator implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
 //        initiateRolesAndPermissions();
+//        List<Permission> adminPermissions = permissionService.getPermissions(List.of(
+//                PermissionName.READ_MEDICAL_DOCS,
+//                PermissionName.READ_PATIENT_INFO,
+//                PermissionName.READ_PROVIDER_INFO,
+//                PermissionName.MANAGE_ENCOUNTER,
+//                PermissionName.MANAGE_APPOINTMENT,
+//                PermissionName.ADD_PATIENT,
+//                PermissionName.ADD_PROVIDER
+//        ));
+//        roleService.addRole(RoleName.ROLE_ADMIN, adminPermissions);
+//        log.info("added admin role");
+
+//        userService.createAdminUser();
+//        log.info("created admin user");
     }
 }

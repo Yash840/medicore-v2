@@ -1,9 +1,11 @@
 package org.cross.medicore.security.internals.service;
 
 import lombok.RequiredArgsConstructor;
+import org.cross.medicore.auditing.annotation.Auditable;
 import org.cross.medicore.exception.UserAlreadyExistException;
 import org.cross.medicore.exception.UserDoesNotExistException;
 import org.cross.medicore.security.api.UserSecurityApi;
+import org.cross.medicore.security.api.dto.AuthenticatedUserDetails;
 import org.cross.medicore.security.api.dto.DeletedUserInfo;
 import org.cross.medicore.security.api.dto.UserDetailsDto;
 import org.cross.medicore.security.internals.constants.RoleName;
@@ -11,6 +13,10 @@ import org.cross.medicore.security.internals.entities.Role;
 import org.cross.medicore.security.internals.entities.User;
 import org.cross.medicore.security.internals.mapper.UserMapper;
 import org.cross.medicore.security.internals.persistence.UserRepository;
+import org.cross.medicore.shared.Action;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -36,6 +42,7 @@ public class UserServiceImpl implements UserService, UserSecurityApi {
     }
 
     @Transactional
+    @Auditable(action = Action.CREATE_USER, message = "Created admin user: admin001")
     public UserDetailsDto createAdminUser(){
         User user = createUser("admin001", "Admin@123", RoleName.ROLE_ADMIN);
 
@@ -44,6 +51,7 @@ public class UserServiceImpl implements UserService, UserSecurityApi {
 
     @Override
     @Transactional
+    @Auditable(action = Action.CREATE_USER, message = "Created patient user: ?1")
     public UserDetailsDto createPatientUser(String username, String rawPassword) {
        User createdUser = createUser(username, rawPassword, RoleName.ROLE_PATIENT);
 
@@ -52,6 +60,7 @@ public class UserServiceImpl implements UserService, UserSecurityApi {
 
     @Override
     @Transactional
+    @Auditable(action = Action.CREATE_USER, message = "Created provider user: ?1")
     public UserDetailsDto createProviderUser(String username, String rawPassword) {
         User createdUser = createUser(username, rawPassword, RoleName.ROLE_PROVIDER);
 
@@ -60,12 +69,55 @@ public class UserServiceImpl implements UserService, UserSecurityApi {
 
     @Override
     @Transactional
+    @Auditable(action = Action.DELETE_USER, message = "Deleted user with userId: ?1")
     public DeletedUserInfo deleteUser(long userId) {
         return userRepository.deleteAndReturnUserInfo(userId);
     }
 
+    private Object getAuthenticatedPrincipal(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new IllegalStateException("No authenticated user");
+        }
+
+        return authentication.getPrincipal();
+    }
+
     @Override
     @Transactional(readOnly = true)
+    public AuthenticatedUserDetails getAuthenticatedUserDetails() {
+        Object principal = getAuthenticatedPrincipal();
+
+        String username;
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails) principal).getUsername();
+        } else if (principal instanceof String) {
+            username = (String) principal;
+        } else {
+            throw new IllegalStateException("Unsupported principal type: " + principal);
+        }
+
+        UserDetailsDto user = getUserByUsername(username);
+
+        RoleName roleName;
+        try {
+            roleName = RoleName.valueOf(user.roleName());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalStateException("Unknown role: " + user.roleName(), e);
+        }
+
+        return new AuthenticatedUserDetails(
+                user.userId(),
+                user.username(),
+                roleName
+        );
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    @Auditable(action = Action.READ_USER_DETAILS, message = "Fetched user details for userId: ?1")
     public UserDetailsDto getUserByUserId(long userId) {
         User user = getUser(userId);
 
@@ -74,6 +126,7 @@ public class UserServiceImpl implements UserService, UserSecurityApi {
 
     @Override
     @Transactional(readOnly = true)
+    @Auditable(action = Action.READ_USER_DETAILS, message = "Fetched user details for username: ?1")
     public UserDetailsDto getUserByUsername(String username) {
         User user = getUser(username);
 

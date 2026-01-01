@@ -1,5 +1,6 @@
 package org.cross.medicore.security.api;
 
+import org.cross.medicore.security.api.dto.AuthenticatedUserDetails;
 import org.cross.medicore.security.api.dto.DeletedUserInfo;
 import org.cross.medicore.security.api.dto.UserDetailsDto;
 
@@ -58,4 +59,6 @@ public interface UserApi {
     boolean validateUser(long userId, String rawPassword);
 
     DeletedUserInfo deleteUser(long userId);
+
+    AuthenticatedUserDetails getAuthenticatedUserDetails();
 }

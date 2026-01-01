@@ -2,6 +2,7 @@ package org.cross.medicore.patients.internals.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.cross.medicore.auditing.annotation.Auditable;
 import org.cross.medicore.exception.PatientNotFoundException;
 import org.cross.medicore.patients.api.dto.PatientBriefProfile;
 import org.cross.medicore.patients.api.dto.PatientPublicDto;
@@ -12,6 +13,7 @@ import org.cross.medicore.patients.internals.entity.PatientStatus;
 import org.cross.medicore.patients.internals.mapper.PatientMapper;
 import org.cross.medicore.patients.internals.persistence.PatientManager;
 import org.cross.medicore.patients.internals.persistence.PatientRepository;
+import org.cross.medicore.shared.Action;
 import org.cross.medicore.shared.Sex;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +30,7 @@ class PatientServiceImpl implements PatientService{
 
     @Override
     @Transactional
+    @Auditable(action = Action.CREATE_PATIENT, message = "Registered new patient with userId: ?2")
     public PatientBriefProfile registerPatient(CreatePatientDto dto, long userId) {
            log.info("registerPatient: attempt to register patient with userId {} and details {}", userId, dto);
 
@@ -44,6 +47,7 @@ class PatientServiceImpl implements PatientService{
 
     @Override
     @Transactional
+    @Auditable(action = Action.MODIFY_PATIENT_DETAILS, message = "Updated patient details for patientId: ?1")
     public PatientPublicDto updatePatientInfo(long patientId, UpdatePatientInfoDto dto) {
             Patient patient = patientRepository.findById(patientId).orElseThrow(() -> new PatientNotFoundException("Invalid Patient Id"));
             PatientMapper.updatePatientFromDto(dto, patient);
@@ -52,6 +56,7 @@ class PatientServiceImpl implements PatientService{
 
     @Override
     @Transactional
+    @Auditable(action = Action.DELETE_PATIENT, message = "Deleted patient with patientId: ?1")
     public PatientPublicDto deletePatient(long patientId) {
             Patient patient = patientRepository.findById(patientId).orElseThrow(() -> new PatientNotFoundException("Invalid Patient Id"));
             PatientPublicDto dto = PatientMapper.toPatientPublicDto(patient);
@@ -95,6 +100,7 @@ class PatientServiceImpl implements PatientService{
 
     @Override
     @Transactional(readOnly = true)
+    @Auditable(action = Action.READ_PATIENT_DETAILS, message = "Fetched patient details for patientId: ?1")
     public PatientPublicDto getPatientById(long patientId) {
             Patient patient = patientRepository.findById(patientId)
                     .orElseThrow(() -> new PatientNotFoundException("Invalid Patient Id"));

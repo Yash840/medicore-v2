@@ -1,6 +1,7 @@
 package org.cross.medicore.scheduling.internals.service;
 
 import lombok.RequiredArgsConstructor;
+import org.cross.medicore.auditing.annotation.Auditable;
 import org.cross.medicore.scheduling.api.dto.CreateProviderScheduleDto;
 import org.cross.medicore.scheduling.api.dto.ProviderScheduleDetailsDto;
 import org.cross.medicore.scheduling.internals.entity.Break;
@@ -8,7 +9,9 @@ import org.cross.medicore.scheduling.internals.entity.ProviderSchedule;
 import org.cross.medicore.scheduling.internals.entity.Slot;
 import org.cross.medicore.scheduling.internals.mapper.ProviderScheduleMapper;
 import org.cross.medicore.scheduling.internals.persistence.ProviderScheduleRepository;
+import org.cross.medicore.shared.Action;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -23,7 +26,9 @@ public class ProviderScheduleServiceImpl implements ProviderScheduleService{
     private final ProviderScheduleRepository providerScheduleRepository;
     private final SlotService slotService;
 
+    @Auditable(action = Action.CREATE_PROVIDER_SCHEDULE, message = "Created provider schedule for providerId: ?1.providerId on date: ?1.scheduleDate")
     @Override
+    @Transactional
     public ProviderScheduleDetailsDto createProviderSchedule(CreateProviderScheduleDto dto) {
         ProviderSchedule schedule = ProviderScheduleMapper.toProviderSchedule(dto);
 
@@ -42,6 +47,8 @@ public class ProviderScheduleServiceImpl implements ProviderScheduleService{
     }
 
     @Override
+    @Transactional(readOnly = true)
+    @Auditable(action = Action.READ_PROVIDER_SCHEDULE, message = "Fetched provider schedule by id: ?1")
     public ProviderScheduleDetailsDto getProviderScheduleById(long id) {
         ProviderSchedule schedule = providerScheduleRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Invalid Id"));
@@ -49,6 +56,8 @@ public class ProviderScheduleServiceImpl implements ProviderScheduleService{
     }
 
     @Override
+    @Transactional(readOnly = true)
+    @Auditable(action = Action.READ_PROVIDER_SCHEDULE, message = "Fetched provider schedule for providerId: ?1 on date: ?2")
     public ProviderScheduleDetailsDto getProviderScheduleByProviderForDay(long providerId, LocalDate schDate) {
         ProviderSchedule schedule = providerScheduleRepository.findByProviderIdAndScheduleDate(providerId, schDate)
                 .orElseThrow(() -> new RuntimeException("Invalid Id or No schedule for given date"));
