@@ -1,5 +1,8 @@
 package org.cross.medicore.clinicals.api.dto;
 
+import lombok.Builder;
+
+@Builder
 public record UpdateVitalsDto(
         Double bodyTemperatureCelsius,
         Integer pulseRateBpm,
