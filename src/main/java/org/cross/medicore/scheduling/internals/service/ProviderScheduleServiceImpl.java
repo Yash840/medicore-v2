@@ -24,7 +24,6 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class ProviderScheduleServiceImpl implements ProviderScheduleService{
     private final ProviderScheduleRepository providerScheduleRepository;
-    private final SlotService slotService;
 
     @Auditable(action = Action.CREATE_PROVIDER_SCHEDULE, message = "Created provider schedule for providerId: ?1.providerId on date: ?1.scheduleDate")
     @Override

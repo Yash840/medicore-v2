@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.cross.medicore.auditing.annotation.Auditable;
 import org.cross.medicore.exception.AppointmentNotFoundException;
 import org.cross.medicore.exception.InvalidAppointmentException;
+import org.cross.medicore.exception.SlotNotFoundException;
 import org.cross.medicore.scheduling.api.constants.AppointmentStatus;
 import org.cross.medicore.scheduling.api.constants.SlotStatus;
 import org.cross.medicore.scheduling.api.dto.AppointmentDetailsDto;
@@ -31,6 +32,11 @@ public class SchedulingServiceImpl implements SchedulingService{
     public AppointmentDetailsDto scheduleAppointment(ScheduleAppointmentDto dto) {
         Appointment appointment = SchedulingMapper.toEntity(dto);
         Slot slot = slotService.getSlotById(dto.slotId());
+
+        if(!slot.getSlotStatus().equals(SlotStatus.FREE)){
+            throw new RuntimeException("Slot Is Not Available");
+        }
+
         appointment.setSlot(slot);
         slot.setSlotStatus(SlotStatus.ENGAGED);
 

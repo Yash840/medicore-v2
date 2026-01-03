@@ -49,4 +49,12 @@ public class Slot {
         this.start = start;
         this.end = end;
     }
+
+    public Slot(ProviderSchedule providerSchedule, long providerId, LocalDateTime start, LocalDateTime end, SlotStatus slotStatus) {
+        this.providerSchedule = providerSchedule;
+        this.providerId = providerId;
+        this.start = start;
+        this.end = end;
+        this.slotStatus = slotStatus;
+    }
 }
