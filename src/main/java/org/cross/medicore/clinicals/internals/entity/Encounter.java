@@ -28,6 +28,11 @@ public class Encounter {
     @Column(name = "version")
     private Integer version;
 
+    public Encounter(long encounterId, long appointmentId) {
+        this.encounterId = encounterId;
+        this.appointmentId = appointmentId;
+    }
+
     public void endEncounter(){
         this.encounterStatus = EncounterStatus.ENDED;
     }
