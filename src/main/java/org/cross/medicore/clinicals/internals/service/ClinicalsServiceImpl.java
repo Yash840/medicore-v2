@@ -52,7 +52,7 @@ public class ClinicalsServiceImpl implements ClinicalsService{
     @Transactional(readOnly = true)
     @Auditable(action = Action.READ_ENCOUNTER_DETAILS, message = "Fetched details for Encounter with AppointmentID: ?1")
     public EncounterDetails getEncounterDetailsByAppointmentId(long appointmentId) {
-        Encounter encounter = encounterRepository.findById(appointmentId)
+        Encounter encounter = encounterRepository.findByAppointmentId(appointmentId)
                 .orElseThrow(() -> new EncounterNotFoundException("Encounter not found with Appointment ID: " + appointmentId));
         return ClinicalsMapper.toEncounterDetails(encounter);
     }
@@ -62,11 +62,10 @@ public class ClinicalsServiceImpl implements ClinicalsService{
     @Auditable(action = Action.END_ENCOUNTER, message = "Ended Encounter ID: ?1")
     public EncounterDetails endEncounter(long encounterId) {
         Encounter encounter = getEncounterByEncounterId(encounterId);
-        EncounterDetails encounterDetails = ClinicalsMapper.toEncounterDetails(encounter);
-
         encounter.endEncounter();
+        Encounter endedEncounter = encounterRepository.save(encounter);
 
-        return encounterDetails;
+        return ClinicalsMapper.toEncounterDetails(endedEncounter);
     }
 
     @Override
