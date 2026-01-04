@@ -14,6 +14,7 @@ import org.cross.medicore.security.internals.entities.User;
 import org.cross.medicore.security.internals.mapper.UserMapper;
 import org.cross.medicore.security.internals.persistence.UserRepository;
 import org.cross.medicore.shared.Action;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -43,6 +44,7 @@ public class UserServiceImpl implements UserService, UserSecurityApi {
 
     @Transactional
     @Auditable(action = Action.CREATE_USER, message = "Created admin user: admin001")
+    @PreAuthorize("hasRole('ADMIN')")
     public UserDetailsDto createAdminUser(){
         User user = createUser("admin001", "Admin@123", RoleName.ROLE_ADMIN);
 
@@ -52,6 +54,7 @@ public class UserServiceImpl implements UserService, UserSecurityApi {
     @Override
     @Transactional
     @Auditable(action = Action.CREATE_USER, message = "Created patient user: ?1")
+    @PreAuthorize("hasAuthority('ADD_PATIENT')")
     public UserDetailsDto createPatientUser(String username, String rawPassword) {
        User createdUser = createUser(username, rawPassword, RoleName.ROLE_PATIENT);
 
@@ -61,6 +64,7 @@ public class UserServiceImpl implements UserService, UserSecurityApi {
     @Override
     @Transactional
     @Auditable(action = Action.CREATE_USER, message = "Created provider user: ?1")
+    @PreAuthorize("hasAuthority('ADD_PROVIDER')")
     public UserDetailsDto createProviderUser(String username, String rawPassword) {
         User createdUser = createUser(username, rawPassword, RoleName.ROLE_PROVIDER);
 
@@ -70,6 +74,7 @@ public class UserServiceImpl implements UserService, UserSecurityApi {
     @Override
     @Transactional
     @Auditable(action = Action.DELETE_USER, message = "Deleted user with userId: ?1")
+    @PreAuthorize("hasRole('ADMIN')")
     public DeletedUserInfo deleteUser(long userId) {
         return userRepository.deleteAndReturnUserInfo(userId);
     }
@@ -118,6 +123,7 @@ public class UserServiceImpl implements UserService, UserSecurityApi {
     @Override
     @Transactional(readOnly = true)
     @Auditable(action = Action.READ_USER_DETAILS, message = "Fetched user details for userId: ?1")
+    @PreAuthorize("isAuthenticated()")
     public UserDetailsDto getUserByUserId(long userId) {
         User user = getUser(userId);
 
@@ -127,6 +133,7 @@ public class UserServiceImpl implements UserService, UserSecurityApi {
     @Override
     @Transactional(readOnly = true)
     @Auditable(action = Action.READ_USER_DETAILS, message = "Fetched user details for username: ?1")
+    @PreAuthorize("isAuthenticated()")
     public UserDetailsDto getUserByUsername(String username) {
         User user = getUser(username);
 

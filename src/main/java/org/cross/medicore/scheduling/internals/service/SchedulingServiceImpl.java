@@ -14,6 +14,7 @@ import org.cross.medicore.scheduling.internals.entity.Slot;
 import org.cross.medicore.scheduling.internals.mapper.SchedulingMapper;
 import org.cross.medicore.scheduling.internals.persistence.AppointmentRepository;
 import org.cross.medicore.shared.Action;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +30,7 @@ public class SchedulingServiceImpl implements SchedulingService{
     @Auditable(action = Action.SCHEDULE_APPOINTMENT, message = "Scheduled appointment for patientId: ?1.patientId with providerId: ?1.providerId on slotId: ?1.slotId")
     @Override
     @Transactional
+    @PreAuthorize("hasAuthority('MANAGE_APPOINTMENT')")
     public AppointmentDetailsDto scheduleAppointment(ScheduleAppointmentDto dto) {
         Appointment appointment = SchedulingMapper.toEntity(dto);
         Slot slot = slotService.getSlotById(dto.slotId());
@@ -48,6 +50,7 @@ public class SchedulingServiceImpl implements SchedulingService{
 
     @Override
     @Transactional(readOnly = true)
+    @PreAuthorize("hasAuthority('MANAGE_APPOINTMENT')")
     public AppointmentDetailsDto getAppointmentDetails(long appointmentId) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new AppointmentNotFoundException(appointmentId));
@@ -57,6 +60,7 @@ public class SchedulingServiceImpl implements SchedulingService{
 
     @Override
     @Transactional(readOnly = true)
+    @PreAuthorize("hasAuthority('MANAGE_APPOINTMENT')")
     public List<AppointmentDetailsDto> getAllAppointmentDetailsForDay(LocalDate date) {
         List<Appointment> appointments = appointmentRepository.findBySlot_ProviderSchedule_ScheduleDateOrderBySlot_StartAsc(date);
 
@@ -67,6 +71,7 @@ public class SchedulingServiceImpl implements SchedulingService{
 
     @Override
     @Transactional(readOnly = true)
+    @PreAuthorize("hasAuthority('MANAGE_APPOINTMENT')")
     public List<AppointmentDetailsDto> getAllAppointmentDetailsForPatient(long patientId) {
         List<Appointment> appointments = appointmentRepository.findByPatientIdOrderBySlot_ProviderSchedule_ScheduleDateAsc(patientId);
 
@@ -77,6 +82,7 @@ public class SchedulingServiceImpl implements SchedulingService{
 
     @Override
     @Transactional(readOnly = true)
+    @PreAuthorize("hasAuthority('MANAGE_APPOINTMENT')")
     public List<AppointmentDetailsDto> getAllAppointmentDetailsForProvider(long providerId) {
         List<Appointment> appointments = appointmentRepository.findByProviderIdOrderBySlot_ProviderSchedule_ScheduleDateAsc(providerId);
 
@@ -87,6 +93,7 @@ public class SchedulingServiceImpl implements SchedulingService{
 
     @Transactional(readOnly = true)
     @Override
+    @PreAuthorize("hasAuthority('MANAGE_APPOINTMENT')")
     public List<AppointmentDetailsDto> getAllAppointmentDetailsForPatient(long patientId, LocalDate date) {
         List<Appointment> appointments = appointmentRepository.findByPatientIdAndSlot_ProviderSchedule_ScheduleDateOrderBySlot_StartAsc(patientId, date);
 
@@ -97,6 +104,7 @@ public class SchedulingServiceImpl implements SchedulingService{
 
     @Override
     @Transactional(readOnly = true)
+    @PreAuthorize("hasAuthority('MANAGE_APPOINTMENT')")
     public List<AppointmentDetailsDto> getAllAppointmentDetailsForProvider(long providerId, LocalDate date) {
         List<Appointment> appointments = appointmentRepository.findByProviderIdAndSlot_ProviderSchedule_ScheduleDateOrderBySlot_StartAsc(providerId, date);
 
@@ -108,6 +116,7 @@ public class SchedulingServiceImpl implements SchedulingService{
     @Override
     @Transactional
     @Auditable(action = Action.CONSUME_APPOINTMENT, message = "Consumed appointment with appointmentId: ?1")
+    @PreAuthorize("hasAuthority('MANAGE_ENCOUNTER')")
     public void consumeAppointment(long appointmentId) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new AppointmentNotFoundException(appointmentId));

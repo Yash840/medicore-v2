@@ -10,6 +10,7 @@ import org.cross.medicore.scheduling.internals.entity.Slot;
 import org.cross.medicore.scheduling.internals.mapper.ProviderScheduleMapper;
 import org.cross.medicore.scheduling.internals.persistence.ProviderScheduleRepository;
 import org.cross.medicore.shared.Action;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +29,7 @@ public class ProviderScheduleServiceImpl implements ProviderScheduleService{
     @Auditable(action = Action.CREATE_PROVIDER_SCHEDULE, message = "Created provider schedule for providerId: ?1.providerId on date: ?1.scheduleDate")
     @Override
     @Transactional
+    @PreAuthorize("hasAuthority('MANAGE_APPOINTMENT')")
     public ProviderScheduleDetailsDto createProviderSchedule(CreateProviderScheduleDto dto) {
         ProviderSchedule schedule = ProviderScheduleMapper.toProviderSchedule(dto);
 
@@ -48,6 +50,7 @@ public class ProviderScheduleServiceImpl implements ProviderScheduleService{
     @Override
     @Transactional(readOnly = true)
     @Auditable(action = Action.READ_PROVIDER_SCHEDULE, message = "Fetched provider schedule by id: ?1")
+    @PreAuthorize("hasAuthority('MANAGE_APPOINTMENT')")
     public ProviderScheduleDetailsDto getProviderScheduleById(long id) {
         ProviderSchedule schedule = providerScheduleRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Invalid Id"));
@@ -57,6 +60,7 @@ public class ProviderScheduleServiceImpl implements ProviderScheduleService{
     @Override
     @Transactional(readOnly = true)
     @Auditable(action = Action.READ_PROVIDER_SCHEDULE, message = "Fetched provider schedule for providerId: ?1 on date: ?2")
+    @PreAuthorize("hasAuthority('MANAGE_APPOINTMENT')")
     public ProviderScheduleDetailsDto getProviderScheduleByProviderForDay(long providerId, LocalDate schDate) {
         ProviderSchedule schedule = providerScheduleRepository.findByProviderIdAndScheduleDate(providerId, schDate)
                 .orElseThrow(() -> new RuntimeException("Invalid Id or No schedule for given date"));

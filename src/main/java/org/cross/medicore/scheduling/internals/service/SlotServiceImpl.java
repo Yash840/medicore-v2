@@ -8,6 +8,7 @@ import org.cross.medicore.scheduling.api.dto.SlotInfo;
 import org.cross.medicore.scheduling.internals.entity.Slot;
 import org.cross.medicore.scheduling.internals.persistence.SlotRepository;
 import org.cross.medicore.shared.Action;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +29,7 @@ public class SlotServiceImpl implements SlotService{
     @Override
     @Transactional(readOnly = true)
     @Auditable(action = Action.READ_SLOT_DETAILS, message = "Fetched available slots for providerId: ?1 near time: ?2")
+    @PreAuthorize("hasAuthority('MANAGE_APPOINTMENT')")
     public List<SlotInfo> getAvailableSlotsByProviderAndTime(long providerId, LocalDateTime requiredTime) {
         LocalDateTime rangeStart = requiredTime.minusMinutes(10);
         LocalDateTime rangeEnd = requiredTime.plusMinutes(10);

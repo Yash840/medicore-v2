@@ -15,6 +15,7 @@ import org.cross.medicore.patients.internals.persistence.PatientManager;
 import org.cross.medicore.patients.internals.persistence.PatientRepository;
 import org.cross.medicore.shared.Action;
 import org.cross.medicore.shared.Sex;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +32,7 @@ class PatientServiceImpl implements PatientService{
     @Override
     @Transactional
     @Auditable(action = Action.CREATE_PATIENT, message = "Registered new patient with userId: ?2")
+    @PreAuthorize("hasAuthority('ADD_PATIENT')")
     public PatientBriefProfile registerPatient(CreatePatientDto dto, long userId) {
            log.info("registerPatient: attempt to register patient with userId {} and details {}", userId, dto);
 
@@ -48,6 +50,7 @@ class PatientServiceImpl implements PatientService{
     @Override
     @Transactional
     @Auditable(action = Action.MODIFY_PATIENT_DETAILS, message = "Updated patient details for patientId: ?1")
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('READ_PATIENT_INFO')")
     public PatientPublicDto updatePatientInfo(long patientId, UpdatePatientInfoDto dto) {
             Patient patient = patientRepository.findById(patientId).orElseThrow(() -> new PatientNotFoundException("Invalid Patient Id"));
             PatientMapper.updatePatientFromDto(dto, patient);
@@ -57,6 +60,7 @@ class PatientServiceImpl implements PatientService{
     @Override
     @Transactional
     @Auditable(action = Action.DELETE_PATIENT, message = "Deleted patient with patientId: ?1")
+    @PreAuthorize("hasRole('ADMIN')")
     public PatientPublicDto deletePatient(long patientId) {
             Patient patient = patientRepository.findById(patientId).orElseThrow(() -> new PatientNotFoundException("Invalid Patient Id"));
             PatientPublicDto dto = PatientMapper.toPatientPublicDto(patient);
@@ -66,6 +70,7 @@ class PatientServiceImpl implements PatientService{
 
     @Override
     @Transactional(readOnly = true)
+    @PreAuthorize("hasAuthority('READ_PATIENT_INFO')")
     public int countPatients(String status, String sex) {
             if(Objects.isNull(status)){
                 return patientRepository.countBySex(Sex.fromString(sex));
@@ -82,6 +87,7 @@ class PatientServiceImpl implements PatientService{
 
     @Override
     @Transactional(readOnly = true)
+    @PreAuthorize("hasAuthority('READ_PATIENT_INFO')")
     public List<PatientPublicDto> getAllPatients() {
         return patientRepository.findAll()
                 .stream()
@@ -91,6 +97,7 @@ class PatientServiceImpl implements PatientService{
 
     @Override
     @Transactional(readOnly = true)
+    @PreAuthorize("hasAuthority('READ_PATIENT_INFO')")
     public List<PatientPublicDto> getAllActivePatients() {
         return patientRepository.findAllByStatus(PatientStatus.ACTIVE)
                 .stream()
@@ -101,6 +108,7 @@ class PatientServiceImpl implements PatientService{
     @Override
     @Transactional(readOnly = true)
     @Auditable(action = Action.READ_PATIENT_DETAILS, message = "Fetched patient details for patientId: ?1")
+    @PreAuthorize("hasAuthority('READ_PATIENT_INFO')")
     public PatientPublicDto getPatientById(long patientId) {
             Patient patient = patientRepository.findById(patientId)
                     .orElseThrow(() -> new PatientNotFoundException("Invalid Patient Id"));

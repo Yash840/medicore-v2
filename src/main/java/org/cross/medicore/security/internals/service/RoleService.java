@@ -5,6 +5,7 @@ import org.cross.medicore.security.internals.constants.RoleName;
 import org.cross.medicore.security.internals.entities.Permission;
 import org.cross.medicore.security.internals.entities.Role;
 import org.cross.medicore.security.internals.persistence.RoleRepository;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +25,7 @@ class RoleService {
 
     // If role already exists update it otherwise insert new one.
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public Role addRole(RoleName roleName, List<Permission> permissions){
         try {
             Role existingRole = getRole(roleName);
